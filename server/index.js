@@ -11,11 +11,26 @@ connectDB().then(() => {
   reloadSchedules();
 }).catch(() => {});
 
+// CORS whitelist
+const allowedOrigins = [
+  'https://crm-app-phi.sable.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Render health checks)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Also allow any vercel.app subdomain (preview deployments)
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    callback(new Error(`CORS blocked: ${origin}`));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
