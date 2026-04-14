@@ -1,0 +1,541 @@
+/* ==========================================
+   CLIENTO — Bauhaus CRM Design System
+   ========================================== */
+
+:root {
+  /* Primary Palette */
+  --primary: #d90429;
+  --primary-container: #e61919;
+  --primary-dark: #bc000a;
+  --on-primary: #ffffff;
+
+  /* Secondary Palette */
+  --secondary: #2b59c3;
+  --secondary-container: #6c98ff;
+  --on-secondary: #ffffff;
+
+  /* Tertiary / Gold */
+  --tertiary: #8d6e00;
+  --tertiary-container: #c9a900;
+  --on-tertiary: #ffffff;
+
+  /* Neutral Surfaces */
+  --surface: #f8f9fa;
+  --surface-dim: #dadada;
+  --surface-container: #eeeeee;
+  --surface-container-low: #f3f3f3;
+  --surface-container-high: #e8e8e8;
+  --surface-container-highest: #e2e2e2;
+  --surface-container-lowest: #ffffff;
+
+  /* Text */
+  --on-surface: #111111;
+  --on-surface-variant: #555555;
+  --text-muted: #888888;
+
+  /* Error */
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+
+  /* Inverse */
+  --inverse-surface: #1b1b1b;
+  --inverse-on-surface: #f1f1f1;
+
+  /* Outline */
+  --outline: #936e69;
+  --outline-variant: #e8bcb6;
+
+  /* Typography */
+  --font-headline: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Spacing */
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+
+  /* Shadows */
+  --shadow-ambient: 0 20px 40px rgba(27, 27, 27, 0.06);
+  --shadow-hover: 0 20px 40px rgba(27, 27, 27, 0.12);
+  --shadow-elevated: 0 8px 32px rgba(27, 27, 27, 0.10);
+}
+
+/* ==========================================
+   Reset & Globals
+   ========================================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--surface);
+  color: var(--on-surface);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6, .font-headline {
+  font-family: var(--font-headline);
+}
+
+/* ==========================================
+   Scrollbar — Bauhaus Style
+   ========================================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* ==========================================
+   Material Symbols
+   ========================================== */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.material-symbols-outlined.filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ==========================================
+   Typography System
+   ========================================== */
+.display-lg {
+  font-family: var(--font-headline);
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.headline-md {
+  font-family: var(--font-headline);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.headline-sm {
+  font-family: var(--font-headline);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.title-md {
+  font-family: var(--font-headline);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.title-sm {
+  font-family: var(--font-headline);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.body-md {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.body-sm {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.label-sm {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.label-xs {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ==========================================
+   Layout
+   ========================================== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* ==========================================
+   Cards — Bauhaus Flat Design
+   ========================================== */
+.card {
+  background: var(--surface-container-lowest);
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: scale(1.02);
+}
+
+.card-metric {
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-metric::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.card-metric.red { background: var(--primary); color: white; }
+.card-metric.red::after { background: white; }
+.card-metric.blue { background: var(--secondary); color: white; }
+.card-metric.blue::after { background: white; }
+.card-metric.gold { background: var(--tertiary); color: white; }
+.card-metric.gold::after { background: white; }
+
+/* ==========================================
+   Buttons
+   ========================================== */
+.btn {
+  font-family: var(--font-headline);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-container));
+  color: var(--on-primary);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+  background: var(--secondary-container);
+  color: var(--on-secondary);
+}
+
+.btn-secondary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+  padding: 4px 0;
+  border-radius: 0;
+}
+
+.btn-ghost:hover {
+  color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* ==========================================
+   Status Badges
+   ========================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-red { background: var(--error-container); color: var(--error); }
+.badge-blue { background: #dae2ff; color: var(--secondary); }
+.badge-gold { background: #ffe16d; color: var(--tertiary); }
+.badge-gray { background: var(--surface-container); color: var(--text-muted); }
+.badge-green { background: #d4f5d4; color: #1a7a1a; }
+
+/* ==========================================
+   Status Dots
+   ========================================== */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.status-dot.red { background: var(--primary); }
+.status-dot.blue { background: var(--secondary); }
+.status-dot.gold { background: var(--tertiary); }
+.status-dot.gray { background: var(--text-muted); }
+.status-dot.green { background: #2ecc40; }
+
+/* ==========================================
+   Tables — Dark Section
+   ========================================== */
+.table-dark {
+  background: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  padding: 24px;
+}
+
+.table-dark table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-dark th {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 12px 16px;
+}
+
+.table-dark td {
+  padding: 16px;
+  font-size: 0.875rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.2s;
+}
+
+.table-dark tr:hover td {
+  background: rgba(255,255,255,0.03);
+}
+
+/* ==========================================
+   Inputs — Bauhaus Underline
+   ========================================== */
+.input-bauhaus {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 2px solid var(--outline);
+  background: transparent;
+  color: var(--on-surface);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.input-bauhaus:focus {
+  border-bottom-color: var(--secondary);
+}
+
+.input-bauhaus::placeholder {
+  color: var(--text-muted);
+}
+
+.input-search {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding: 10px 16px 10px 40px;
+  border: none;
+  background: var(--surface-container);
+  color: var(--on-surface);
+  outline: none;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.input-search:focus {
+  background: var(--surface-container-high);
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+/* ==========================================
+   Kanban
+   ========================================== */
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+
+.kanban-column {
+  min-width: 280px;
+  max-width: 320px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kanban-column-header {
+  padding: 16px;
+  font-family: var(--font-headline);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-card {
+  background: var(--surface-container-lowest);
+  padding: 16px;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.kanban-card:hover {
+  box-shadow: var(--shadow-ambient);
+  transform: translateY(-2px);
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+/* ==========================================
+   Skeleton Loader
+   ========================================== */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-container) 25%, var(--surface-container-high) 50%, var(--surface-container) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 0;
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 16px;
+  }
+
+  .display-lg {
+    font-size: 2.5rem;
+  }
+
+  .kanban-board {
+    flex-direction: column;
+  }
+
+  .kanban-column {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* ==========================================
+   Utility
+   ========================================== */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
