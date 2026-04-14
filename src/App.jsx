@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
 import TopNav from './components/TopNav';
 import ProtectedRoute from './components/ProtectedRoute';
+import AIChat from './components/AIChat';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import Contacts from './pages/Contacts';
@@ -53,6 +54,7 @@ function CRMLayout() {
           </motion.div>
         </AnimatePresence>
       </div>
+      <AIChat />
     </div>
   );
 }

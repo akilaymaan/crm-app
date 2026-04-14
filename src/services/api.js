@@ -59,4 +59,11 @@ export const tasksAPI = {
   delete: (id) => API.delete(`/tasks/${id}`),
 };
 
+// ─── AI CHAT ────────────────────────────────────────
+export const aiAPI = {
+  chat: (message, history = []) => API.post('/ai/chat', { message, history }),
+  confirm: (intent) => API.post('/ai/confirm', { intent }),
+};
+
 export default API;
+
