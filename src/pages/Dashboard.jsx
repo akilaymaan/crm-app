@@ -250,44 +250,46 @@ export default function Dashboard() {
             <p className="body-md">No contacts yet — add your first one!</p>
           </div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                {['Contact', 'Organization', 'Status', 'Valuation'].map(h => <th key={h}>{h}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {contacts.map((contact, i) => (
-                <motion.tr key={contact._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.06 }} style={{ cursor: 'pointer' }}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{
-                        width: '36px', height: '36px',
-                        background: i % 3 === 0 ? 'var(--primary)' : i % 3 === 1 ? 'var(--secondary)' : 'var(--tertiary)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem',
-                      }}>
-                        {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+          <div className="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  {['Contact', 'Organization', 'Status', 'Valuation'].map(h => <th key={h}>{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {contacts.map((contact, i) => (
+                  <motion.tr key={contact._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.06 }} style={{ cursor: 'pointer' }}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                          width: '36px', height: '36px',
+                          background: i % 3 === 0 ? 'var(--primary)' : i % 3 === 1 ? 'var(--secondary)' : 'var(--tertiary)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem',
+                        }}>
+                          {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{contact.name}</p>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{contact.email}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{contact.name}</p>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{contact.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td style={{ color: 'var(--inverse-on-surface)' }}>{contact.company || '—'}</td>
-                  <td>
-                    <span className={`badge ${contact.status === 'Active' ? 'badge-green' : contact.status === 'Lead' ? 'badge-blue' : contact.status === 'Prospect' ? 'badge-gold' : 'badge-gray'}`}>
-                      {contact.status}
-                    </span>
-                  </td>
-                  <td style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.9rem', color: 'var(--inverse-on-surface)' }}>
-                    {contact.valuation ? `$${(contact.valuation / 1000).toFixed(0)}K` : '—'}
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td style={{ color: 'var(--inverse-on-surface)' }}>{contact.company || '—'}</td>
+                    <td>
+                      <span className={`badge ${contact.status === 'Active' ? 'badge-green' : contact.status === 'Lead' ? 'badge-blue' : contact.status === 'Prospect' ? 'badge-gold' : 'badge-gray'}`}>
+                        {contact.status}
+                      </span>
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.9rem', color: 'var(--inverse-on-surface)' }}>
+                      {contact.valuation ? `$${(contact.valuation / 1000).toFixed(0)}K` : '—'}
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
         <motion.button
           whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
@@ -297,7 +299,7 @@ export default function Dashboard() {
         </motion.button>
       </motion.div>
 
-      <style>{`@media(max-width:768px){div[style*="grid-template-columns: repeat(3"]{grid-template-columns:1fr!important}div[style*="grid-template-columns: 2fr 1fr"]{grid-template-columns:1fr!important}}`}</style>
+      <style>{`@media(max-width:768px){div[style*="grid-template-columns: repeat(3"]{grid-template-columns:1fr!important}div[style*="grid-template-columns: 2fr 1fr"]{grid-template-columns:1fr!important}div[style*="alignItems: 'flex-end'"]{flex-direction:column; align-items:flex-start!important; gap:16px;}}`}</style>
     </motion.div>
   );
 }

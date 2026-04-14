@@ -114,7 +114,7 @@ function ContactDetail({ contact, onClose, onEdit, onDelete }) {
           <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'white' }}><span className="material-symbols-outlined">close</span></button>
         </div>
         <div style={{ padding: '24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div className="modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
             {[
               { label: 'Email', value: contact.email || '—', icon: 'email' },
               { label: 'Phone', value: contact.phone || '—', icon: 'phone' },
@@ -231,40 +231,42 @@ export default function Contacts({ searchQuery = '' }) {
             <button className="btn btn-primary" onClick={() => setShowModal(true)}>ADD CONTACT</button>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--surface-container-high)' }}>
-                {['Contact', 'Company', 'Email', 'Status', 'Valuation'].map(h => (
-                  <th key={h} className="label-sm" style={{ textAlign: 'left', padding: '16px', color: 'var(--text-muted)' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {contacts.map((contact, i) => (
-                <motion.tr key={contact._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
-                  onClick={() => setSelectedContact(contact)} style={{ cursor: 'pointer', transition: 'background 0.2s' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-container-low)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <td style={{ padding: '14px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '36px', height: '36px', background: i % 3 === 0 ? 'var(--primary)' : i % 3 === 1 ? 'var(--secondary)' : 'var(--tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem' }}>
-                        {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+          <div className="table-responsive">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--surface-container-high)' }}>
+                  {['Contact', 'Company', 'Email', 'Status', 'Valuation'].map(h => (
+                    <th key={h} className="label-sm" style={{ textAlign: 'left', padding: '16px', color: 'var(--text-muted)' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {contacts.map((contact, i) => (
+                  <motion.tr key={contact._id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
+                    onClick={() => setSelectedContact(contact)} style={{ cursor: 'pointer', transition: 'background 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-container-low)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <td style={{ padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '36px', height: '36px', background: i % 3 === 0 ? 'var(--primary)' : i % 3 === 1 ? 'var(--secondary)' : 'var(--tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem' }}>
+                          {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                        </div>
+                        <span className="title-sm">{contact.name}</span>
                       </div>
-                      <span className="title-sm">{contact.name}</span>
-                    </div>
-                  </td>
-                  <td style={{ padding: '14px 16px' }} className="body-sm">{contact.company || '—'}</td>
-                  <td style={{ padding: '14px 16px' }} className="body-sm">{contact.email || '—'}</td>
-                  <td style={{ padding: '14px 16px' }}>
-                    <span className={`badge ${contact.status === 'Active' ? 'badge-green' : contact.status === 'Lead' ? 'badge-blue' : contact.status === 'Prospect' ? 'badge-gold' : 'badge-gray'}`}>{contact.status}</span>
-                  </td>
-                  <td style={{ padding: '14px 16px', fontFamily: 'var(--font-headline)', fontWeight: 700 }}>
-                    {contact.valuation ? `$${contact.valuation.toLocaleString()}` : '—'}
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td style={{ padding: '14px 16px' }} className="body-sm">{contact.company || '—'}</td>
+                    <td style={{ padding: '14px 16px' }} className="body-sm">{contact.email || '—'}</td>
+                    <td style={{ padding: '14px 16px' }}>
+                      <span className={`badge ${contact.status === 'Active' ? 'badge-green' : contact.status === 'Lead' ? 'badge-blue' : contact.status === 'Prospect' ? 'badge-gold' : 'badge-gray'}`}>{contact.status}</span>
+                    </td>
+                    <td style={{ padding: '14px 16px', fontFamily: 'var(--font-headline)', fontWeight: 700 }}>
+                      {contact.valuation ? `$${contact.valuation.toLocaleString()}` : '—'}
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </motion.div>
 
@@ -272,7 +274,13 @@ export default function Contacts({ searchQuery = '' }) {
         {showModal && <ContactModal contact={editingContact} onClose={() => { setShowModal(false); setEditingContact(null); }} onSave={handleSave} />}
         {selectedContact && <ContactDetail contact={selectedContact} onClose={() => setSelectedContact(null)} onEdit={handleEdit} onDelete={handleDelete} />}
       </AnimatePresence>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media (max-width: 600px) {
+          .modal-grid { grid-template-columns: 1fr !important; }
+          div[style*="alignItems: 'flex-end'"] { flex-direction: column; align-items: flex-start !important; gap: 16px; }
+        }
+      `}</style>
     </motion.div>
   );
 }

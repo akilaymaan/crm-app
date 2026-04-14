@@ -531,6 +531,15 @@ h1, h2, h3, h4, h5, h6, .font-headline {
 /* ==========================================
    Utility
    ========================================== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-responsive table {
+  min-width: 600px;
+}
+
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;

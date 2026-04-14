@@ -47,7 +47,7 @@ function TaskModal({ task, onClose, onSave }) {
             <label className="label-sm" style={{ display: 'block', marginBottom: '8px', color: 'var(--on-surface-variant)' }}>DESCRIPTION</label>
             <textarea className="input-bauhaus" value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} style={{ resize: 'vertical' }} placeholder="Details..." />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="modal-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
               <label className="label-sm" style={{ display: 'block', marginBottom: '8px', color: 'var(--on-surface-variant)' }}>DUE DATE</label>
               <input className="input-bauhaus" type="date" value={form.dueDate ? form.dueDate.slice(0, 10) : ''} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} />
@@ -332,7 +332,14 @@ export default function Tasks({ searchQuery = '' }) {
         <span className="material-symbols-outlined" style={{ fontSize: '28px' }}>add_task</span>
       </motion.button>
 
-      <style>{`@media(max-width:768px){div[style*="grid-template-columns: 2fr 1fr"]{grid-template-columns:1fr!important}}`}</style>
+      <style>{`
+        @media(max-width:768px){
+          div[style*="grid-template-columns: 2fr 1fr"]{grid-template-columns:1fr!important}
+        }
+        @media(max-width:600px){
+          .modal-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </motion.div>
   );
 }
