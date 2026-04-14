@@ -1,6 +1,16 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Lazy-init: don't crash the server at startup if key is missing
+let _genAI = null;
+function getGenAI() {
+  if (!_genAI) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not set in environment variables');
+    }
+    _genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  }
+  return _genAI;
+}
 
 const SYSTEM_PROMPT = `You are an intelligent AI assistant for CLIENTO, a professional CRM system.
 Your ONLY job is to convert user requests into structured JSON action commands.
@@ -26,13 +36,8 @@ AVAILABLE ACTIONS:
 - schedule_task: Schedule recurring task. Requires: title, schedule_expression (e.g. "every Sunday 9pm", "every Monday 9am"). Optional: description, priority
 - get_summary: Get CRM summary stats. No data required.
 
-RESPONSE FORMAT (always return this exact structure):
-{
-  "action": "<action_name>",
-  "data": { <action specific fields> },
-  "confirmation_required": false,
-  "message": "<optional friendly message to show user, only if needed>"
-}
+RESPONSE FORMAT (always return this exact JSON structure, nothing else):
+{"action":"<action_name>","data":{<fields>},"confirmation_required":false,"message":"<optional>"}
 
 EXAMPLES:
 User: "Show me all contacts"
@@ -51,7 +56,7 @@ User: "Schedule a call task every Sunday 9pm"
 Response: {"action":"schedule_task","data":{"title":"Call","schedule_expression":"every Sunday 9pm"},"confirmation_required":false}
 
 User: "Delete contact John"
-Response: {"action":"delete_contact","data":{"name_hint":"John"},"confirmation_required":true,"message":"⚠️ Are you sure you want to delete the contact matching 'John'? This cannot be undone."}
+Response: {"action":"delete_contact","data":{"name_hint":"John"},"confirmation_required":true,"message":"Are you sure you want to delete the contact matching John? This cannot be undone."}
 
 User: "Tasks due tomorrow"
 Response: {"action":"get_tasks","data":{"due_tomorrow":true},"confirmation_required":false}`;
@@ -62,38 +67,56 @@ Response: {"action":"get_tasks","data":{"due_tomorrow":true},"confirmation_requi
  * @param {Array} history - array of {role, parts} objects
  */
 async function parseIntent(userMessage, history = []) {
+  const genAI = getGenAI();
+
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-1.5-flash',
     systemInstruction: SYSTEM_PROMPT,
     generationConfig: {
       temperature: 0.1,
-      maxOutputTokens: 1024,
-      responseMimeType: 'application/json',
+      maxOutputTokens: 512,
     },
   });
 
-  // Build chat history for context (last 10 exchanges max)
-  const safeHistory = (history || []).slice(-10).filter(h => h.role && h.parts);
+  // Build chat history for context (last 8 exchanges max)
+  const safeHistory = (history || []).slice(-8).filter(
+    h => h && h.role && Array.isArray(h.parts) && h.parts.length > 0
+  );
 
-  const chat = model.startChat({ history: safeHistory });
-  const result = await chat.sendMessage(userMessage);
-  const text = result.response.text();
+  let text;
+  try {
+    if (safeHistory.length > 0) {
+      const chat = model.startChat({ history: safeHistory });
+      const result = await chat.sendMessage(userMessage);
+      text = result.response.text();
+    } else {
+      // No history — use direct generateContent for reliability
+      const result = await model.generateContent(
+        `${SYSTEM_PROMPT}\n\nUser: ${userMessage}\nResponse:`
+      );
+      text = result.response.text();
+    }
+  } catch (apiErr) {
+    console.error('[Gemini] API call failed:', apiErr.message);
+    throw apiErr;
+  }
+
+  // Strip accidental markdown fences
+  const cleaned = text.replace(/```json\n?/gi, '').replace(/```\n?/gi, '').trim();
 
   try {
-    // Strip any accidental markdown code fences
-    const cleaned = text.replace(/```json\n?/gi, '').replace(/```\n?/gi, '').trim();
     return JSON.parse(cleaned);
   } catch {
-    // Fallback: try to extract first JSON object from response
-    const match = text.match(/\{[\s\S]*\}/);
+    // Try to extract first JSON object
+    const match = cleaned.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return JSON.parse(match[0]); } catch { /* ignore */ }
+      try { return JSON.parse(match[0]); } catch { /* fall through */ }
     }
     return {
       action: 'unknown',
       data: {},
       confirmation_required: false,
-      message: "I couldn't parse a valid action from your request. Please try rephrasing.",
+      message: "I couldn't parse that request. Please try rephrasing.",
     };
   }
 }
