@@ -34,7 +34,7 @@ export default function AuthPage() {
         await register(form.name, form.email, form.password);
         toast.success('Account created!');
       }
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       const msg = err.response?.data?.message || 'Something went wrong';
       toast.error(msg);

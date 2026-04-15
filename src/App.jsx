@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -44,14 +44,7 @@ function CRMLayout() {
             exit="exit"
             className="page-content"
           >
-            <Routes location={location}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/contacts" element={<Contacts searchQuery={searchQuery} />} />
-              <Route path="/pipeline" element={<Pipeline />} />
-              <Route path="/tasks" element={<Tasks searchQuery={searchQuery} />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            <Outlet />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -81,14 +74,15 @@ export default function App() {
         />
         <Routes>
           <Route path="/login" element={<AuthPage />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <CRMLayout />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<ProtectedRoute><CRMLayout /></ProtectedRoute>}>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/contacts" element={<Contacts />} />
+            <Route path="/pipeline" element={<Pipeline />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </ThemeProvider>
     </AuthProvider>

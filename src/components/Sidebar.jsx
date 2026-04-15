@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const menuItems = [
-  { path: '/', label: 'Dashboard', icon: 'grid_view' },
+  { path: '/dashboard', label: 'Dashboard', icon: 'grid_view' },
   { path: '/contacts', label: 'Contacts', icon: 'group' },
   { path: '/pipeline', label: 'Pipeline', icon: 'analytics' },
   { path: '/tasks', label: 'Tasks', icon: 'assignment' },
