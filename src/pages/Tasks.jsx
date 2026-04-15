@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { tasksAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
@@ -92,6 +93,9 @@ function TaskModal({ task, onClose, onSave }) {
 }
 
 export default function Tasks({ searchQuery = '' }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+
   const [tasks, setTasks] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -218,9 +222,11 @@ export default function Tasks({ searchQuery = '' }) {
                           <button onClick={() => { setEditingTask(task); setShowModal(true); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
                           </button>
-                          <button onClick={() => handleDelete(task._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
-                          </button>
+                          {isAdmin && (
+                            <button onClick={() => handleDelete(task._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                       {task.description && <p className="body-sm" style={{ color: 'var(--on-surface-variant)', marginBottom: '12px', lineHeight: 1.6 }}>{task.description}</p>}
@@ -261,9 +267,11 @@ export default function Tasks({ searchQuery = '' }) {
                     </div>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <span className="label-xs" style={{ color: 'var(--text-muted)' }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}</span>
-                      <button onClick={() => handleDelete(task._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
-                      </button>
+                      {isAdmin && (
+                        <button onClick={() => handleDelete(task._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

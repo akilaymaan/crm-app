@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { contactsAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
@@ -84,7 +85,7 @@ function ContactModal({ contact, onClose, onSave }) {
   );
 }
 
-function ContactDetail({ contact, onClose, onEdit, onDelete }) {
+function ContactDetail({ contact, onClose, onEdit, onDelete, canEdit, isAdmin }) {
   const [delLoading, setDelLoading] = useState(false);
   const handleDelete = async () => {
     if (!confirm(`Delete ${contact.name}?`)) return;
@@ -134,12 +135,16 @@ function ContactDetail({ contact, onClose, onEdit, onDelete }) {
             </div>
           )}
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={() => { onClose(); onEdit(contact); }} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>Edit
-            </button>
-            <button onClick={handleDelete} disabled={delLoading} className="btn" style={{ background: 'var(--error)', color: 'white' }}>
-              {delLoading ? '...' : <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>}
-            </button>
+            {canEdit && (
+              <button onClick={() => { onClose(); onEdit(contact); }} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>Edit
+              </button>
+            )}
+            {isAdmin && (
+              <button onClick={handleDelete} disabled={delLoading} className="btn" style={{ background: 'var(--error)', color: 'white' }}>
+                {delLoading ? '...' : <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
@@ -148,6 +153,10 @@ function ContactDetail({ contact, onClose, onEdit, onDelete }) {
 }
 
 export default function Contacts({ searchQuery = '' }) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const canEdit = ['admin', 'manager'].includes(user?.role);
+
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -205,9 +214,11 @@ export default function Contacts({ searchQuery = '' }) {
           <p className="label-sm" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>CRM DATABASE</p>
           <h2 className="headline-md" style={{ textTransform: 'uppercase' }}>Contacts</h2>
         </div>
-        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} className="btn btn-primary" onClick={() => { setEditingContact(null); setShowModal(true); }}>
-          <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>NEW CONTACT
-        </motion.button>
+        {canEdit && (
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} className="btn btn-primary" onClick={() => { setEditingContact(null); setShowModal(true); }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>NEW CONTACT
+          </motion.button>
+        )}
       </motion.div>
 
       <motion.div variants={itemVariants} style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
@@ -227,8 +238,8 @@ export default function Contacts({ searchQuery = '' }) {
         ) : contacts.length === 0 ? (
           <div style={{ padding: '64px', textAlign: 'center', color: 'var(--text-muted)' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '56px', marginBottom: '12px', display: 'block' }}>person_add</span>
-            <p className="body-md" style={{ marginBottom: '16px' }}>No contacts yet. Add your first one!</p>
-            <button className="btn btn-primary" onClick={() => setShowModal(true)}>ADD CONTACT</button>
+            <p className="body-md" style={{ marginBottom: '16px' }}>No contacts yet.{canEdit ? ' Add your first one!' : ''}</p>
+            {canEdit && <button className="btn btn-primary" onClick={() => setShowModal(true)}>ADD CONTACT</button>}
           </div>
         ) : (
           <div className="table-responsive">
@@ -272,7 +283,7 @@ export default function Contacts({ searchQuery = '' }) {
 
       <AnimatePresence>
         {showModal && <ContactModal contact={editingContact} onClose={() => { setShowModal(false); setEditingContact(null); }} onSave={handleSave} />}
-        {selectedContact && <ContactDetail contact={selectedContact} onClose={() => setSelectedContact(null)} onEdit={handleEdit} onDelete={handleDelete} />}
+        {selectedContact && <ContactDetail contact={selectedContact} onClose={() => setSelectedContact(null)} onEdit={handleEdit} onDelete={handleDelete} canEdit={canEdit} isAdmin={isAdmin} />}
       </AnimatePresence>
       <style>{`
         @keyframes spin{to{transform:rotate(360deg)}}

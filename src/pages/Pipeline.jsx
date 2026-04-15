@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { dealsAPI, contactsAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const stages = ['Prospect', 'Negotiation', 'Closed Won', 'Closed Lost'];
 const stageColors = {
@@ -91,6 +92,10 @@ function DealModal({ deal, contacts, onClose, onSave }) {
 }
 
 export default function Pipeline() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const canEdit = ['admin', 'manager'].includes(user?.role);
+
   const [deals, setDeals] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -159,9 +164,11 @@ export default function Pipeline() {
         </div>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           {!loading && <span className="label-sm" style={{ color: 'var(--text-muted)' }}>{deals.length} DEALS • ${(deals.reduce((s, d) => s + d.value, 0) / 1000).toFixed(0)}K TOTAL</span>}
-          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} className="btn btn-primary" onClick={() => { setEditingDeal(null); setShowModal(true); }}>
-            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>NEW DEAL
-          </motion.button>
+          {canEdit && (
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} className="btn btn-primary" onClick={() => { setEditingDeal(null); setShowModal(true); }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>NEW DEAL
+            </motion.button>
+          )}
         </div>
       </motion.div>
 
@@ -175,7 +182,7 @@ export default function Pipeline() {
             const stageDeals = deals.filter(d => d.stage === stage);
             const colors = stageColors[stage];
             return (
-              <div key={stage} className="kanban-column" onDragOver={e => e.preventDefault()} onDrop={() => handleDrop(stage)} style={{ flex: 1, minWidth: '260px' }}>
+              <div key={stage} className="kanban-column" onDragOver={e => e.preventDefault()} onDrop={canEdit ? () => handleDrop(stage) : undefined} style={{ flex: 1, minWidth: '260px' }}>
                 <div className="kanban-column-header" style={{ borderLeft: `4px solid ${colors.border}`, background: 'var(--surface-container-lowest)' }}>
                   <span style={{ color: colors.text }}>{stage}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -185,16 +192,20 @@ export default function Pipeline() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {stageDeals.map(deal => (
-                    <motion.div key={deal._id} layout draggable onDragStart={() => setDraggedDeal(deal)} className="kanban-card" style={{ borderLeft: `4px solid ${colors.border}` }} whileHover={{ y: -2, boxShadow: 'var(--shadow-ambient)' }}>
+                    <motion.div key={deal._id} layout draggable={canEdit} onDragStart={canEdit ? () => setDraggedDeal(deal) : undefined} className="kanban-card" style={{ borderLeft: `4px solid ${colors.border}` }} whileHover={{ y: -2, boxShadow: 'var(--shadow-ambient)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                         <h4 className="title-sm" style={{ flex: 1, paddingRight: '8px' }}>{deal.title}</h4>
                         <div style={{ display: 'flex', gap: '4px' }}>
-                          <button onClick={() => { setEditingDeal(deal); setShowModal(true); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>
-                          </button>
-                          <button onClick={() => handleDelete(deal._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
-                          </button>
+                          {canEdit && (
+                            <button onClick={() => { setEditingDeal(deal); setShowModal(true); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>
+                            </button>
+                          )}
+                          {isAdmin && (
+                            <button onClick={() => handleDelete(deal._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '2px' }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
+                            </button>
+                          )}
                         </div>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>

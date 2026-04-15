@@ -189,26 +189,28 @@ export default function Sidebar({ isOpen, onToggle }) {
         </nav>
 
         {/* Add Record Button */}
-        <div style={{ padding: '16px 24px' }}>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              navigate('/contacts');
-              if (window.innerWidth < 1024) onToggle?.();
-            }}
-            className="btn btn-primary"
-            style={{
-              width: '100%',
-              justifyContent: 'center',
-              padding: '16px',
-              fontSize: '0.75rem',
-            }}
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
-            ADD RECORD
-          </motion.button>
-        </div>
+        {['admin', 'manager'].includes(user?.role) && (
+          <div style={{ padding: '16px 24px' }}>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                navigate('/contacts');
+                if (window.innerWidth < 1024) onToggle?.();
+              }}
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                justifyContent: 'center',
+                padding: '16px',
+                fontSize: '0.75rem',
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+              ADD RECORD
+            </motion.button>
+          </div>
+        )}
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid var(--surface-container-high)' }}>
