@@ -78,7 +78,7 @@ export default function Dashboard() {
 
   // Build chart data from actual deals grouped by month
   const chartData = (() => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const map = {};
     months.forEach(m => { map[m] = 0; });
     deals.forEach(d => {
@@ -96,7 +96,7 @@ export default function Dashboard() {
     {
       label: 'TOTAL CONTACTS',
       value: stats.totalContacts?.toLocaleString() || '0',
-      change: `${stats.activeDeals || 0} active deals`,
+      change: `In Organization`,
       sub: '',
       bg: 'linear-gradient(135deg, #bc000a, #e61919)',
     },
