@@ -14,7 +14,7 @@ const menuItems = [
 export default function Sidebar({ isOpen, onToggle }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <>
