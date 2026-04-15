@@ -73,7 +73,8 @@ export default function AuthPage() {
       {/* Left accent panel */}
       <div style={{
         width: '420px',
-        background: 'var(--on-surface)',
+        background: '#111111',
+        borderRight: '1px solid rgba(255,255,255,0.05)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
