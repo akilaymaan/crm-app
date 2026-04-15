@@ -7,8 +7,15 @@ import { useAuth } from '../context/AuthContext';
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.06 } } };
 const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 const priorityColors = { High: 'var(--primary)', Medium: 'var(--secondary)', Low: 'var(--tertiary)' };
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const dateRange = [12, 13, 14, 15, 16, 17, 18];
+const today = new Date();
+const currentMonthStr = today.toLocaleString('en-US', { month: 'long' }).toUpperCase();
+const dynamicDates = Array.from({ length: 7 }, (_, i) => {
+  const d = new Date(today);
+  d.setDate(today.getDate() - 3 + i); // Center around today
+  return d;
+});
+const days = dynamicDates.map(d => d.toLocaleString('en-US', { weekday: 'short' }));
+const dateRange = dynamicDates.map(d => d.getDate());
 
 function TaskModal({ task, onClose, onSave }) {
   const [form, setForm] = useState(task || { title: '', description: '', dueDate: '', priority: 'Medium', assignedTo: '', status: 'Pending' });
@@ -99,7 +106,7 @@ export default function Tasks({ searchQuery = '' }) {
   const [tasks, setTasks] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(12);
+  const [selectedDate, setSelectedDate] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -149,8 +156,13 @@ export default function Tasks({ searchQuery = '' }) {
     toast.success('Task deleted');
   };
 
-  const activeTasks = tasks.filter(t => t.status !== 'Completed');
-  const completedTasks = tasks.filter(t => t.status === 'Completed');
+  const timelineTasks = selectedDate === 'All' ? tasks : tasks.filter(t => {
+    if (!t.dueDate) return false;
+    return new Date(t.dueDate).getDate() === selectedDate;
+  });
+
+  const activeTasks = timelineTasks.filter(t => t.status !== 'Completed');
+  const completedTasks = timelineTasks.filter(t => t.status === 'Completed');
   const efficiency = stats ? Math.round((stats.completed / (stats.total || 1)) * 100) : 0;
 
   return (
@@ -160,14 +172,14 @@ export default function Tasks({ searchQuery = '' }) {
         <div style={{ flexShrink: 0, paddingRight: '32px' }}>
           <p className="label-sm" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>TIMELINE</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '1.875rem', fontWeight: 700, fontFamily: 'var(--font-headline)', letterSpacing: '-0.02em' }}>OCTOBER</span>
+            <span style={{ fontSize: '1.875rem', fontWeight: 700, fontFamily: 'var(--font-headline)', letterSpacing: '-0.02em' }}>{currentMonthStr}</span>
             <span className="material-symbols-outlined" style={{ color: 'var(--primary)', cursor: 'pointer' }}>calendar_today</span>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', flex: 1 }} className="no-scrollbar">
           {dateRange.map((date, i) => (
-            <motion.div key={date} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setSelectedDate(date)}
-              style={{ width: '56px', height: '80px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: selectedDate === date ? 'var(--primary)' : 'var(--surface-container-lowest)', color: selectedDate === date ? 'white' : 'var(--on-surface)', transition: 'all 0.2s' }}>
+            <motion.div key={i} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setSelectedDate(prev => prev === date ? 'All' : date)}
+              style={{ width: '56px', height: '80px', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: selectedDate === date ? 'var(--primary)' : 'var(--surface-container-lowest)', color: selectedDate === date ? 'white' : 'var(--on-surface)', transition: 'all 0.2s', borderRadius: '8px' }}>
               <span style={{ fontSize: '0.625rem', fontWeight: 700, textTransform: 'uppercase', color: selectedDate === date ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>{days[i]}</span>
               <span style={{ fontSize: '1.25rem', fontWeight: 700, fontFamily: 'var(--font-headline)' }}>{date}</span>
             </motion.div>
