@@ -214,7 +214,9 @@ export default function Sidebar({ isOpen, onToggle }) {
         <footer style={{ borderTop: '1px solid var(--surface-container-high)' }}>
           <button
             onClick={() => {
-              navigate('/settings');
+              import('react-hot-toast').then(({ default: toast }) => {
+                toast('Help Center coming soon!', { icon: 'ℹ️', style: { background: 'var(--surface-container-high)', color: 'var(--on-surface)' } });
+              });
               if (window.innerWidth < 1024) onToggle?.();
             }}
             style={{
