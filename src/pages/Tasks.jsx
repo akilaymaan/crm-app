@@ -245,7 +245,7 @@ export default function Tasks({ searchQuery = '' }) {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         {task.assignedTo && (
                           <div style={{ width: '28px', height: '28px', background: 'var(--surface-container)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.6rem', color: 'var(--on-surface-variant)' }}>
-                            {task.assignedTo.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                            {(task.assignedTo || 'Unassigned').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                           </div>
                         )}
                         <span className="label-xs" style={{ color: priorityColors[task.priority], display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>

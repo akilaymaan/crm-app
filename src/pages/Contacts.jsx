@@ -106,7 +106,7 @@ function ContactDetail({ contact, onClose, onEdit, onDelete, canEdit, isAdmin })
         onClick={e => e.stopPropagation()}>
         <div style={{ background: 'var(--secondary)', padding: '32px', color: 'white', display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ width: '64px', height: '64px', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-headline)', fontWeight: 900, fontSize: '1.5rem' }}>
-            {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+            {(contact?.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
           </div>
           <div>
             <h3 className="headline-md" style={{ color: 'white', marginBottom: '4px' }}>{contact.name}</h3>
@@ -260,7 +260,7 @@ export default function Contacts({ searchQuery = '' }) {
                     <td style={{ padding: '14px 16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ width: '36px', height: '36px', background: i % 3 === 0 ? 'var(--primary)' : i % 3 === 1 ? 'var(--secondary)' : 'var(--tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem' }}>
-                          {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                          {(contact?.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <span className="title-sm">{contact.name}</span>
                       </div>

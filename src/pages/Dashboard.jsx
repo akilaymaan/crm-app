@@ -268,7 +268,7 @@ export default function Dashboard() {
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           color: 'white', fontFamily: 'var(--font-headline)', fontWeight: 700, fontSize: '0.75rem',
                         }}>
-                          {contact.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                          {(contact?.name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{contact.name}</p>
