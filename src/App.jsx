@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Sidebar from './components/Sidebar';
 import TopNav from './components/TopNav';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -62,32 +63,34 @@ function CRMLayout() {
 export default function App() {
   return (
     <AuthProvider>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.875rem',
-            background: 'var(--inverse-surface)',
-            color: 'var(--inverse-on-surface)',
-            borderRadius: '0',
-            padding: '12px 20px',
-          },
-          success: { iconTheme: { primary: '#2ecc40', secondary: 'white' } },
-          error: { iconTheme: { primary: 'var(--primary)', secondary: 'white' } },
-        }}
-      />
-      <Routes>
-        <Route path="/login" element={<AuthPage />} />
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <CRMLayout />
-            </ProtectedRoute>
-          }
+      <ThemeProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.875rem',
+              background: 'var(--inverse-surface)',
+              color: 'var(--inverse-on-surface)',
+              borderRadius: '0',
+              padding: '12px 20px',
+            },
+            success: { iconTheme: { primary: '#2ecc40', secondary: 'white' } },
+            error: { iconTheme: { primary: 'var(--primary)', secondary: 'white' } },
+          }}
         />
-      </Routes>
+        <Routes>
+          <Route path="/login" element={<AuthPage />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <CRMLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08 } } };
@@ -16,6 +17,7 @@ const roles = [
 
 export default function Settings() {
   const { user, logout } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '' });
   const [activeTab, setActiveTab] = useState('profile');
@@ -105,22 +107,47 @@ export default function Settings() {
 
       {activeTab === 'preferences' && (
         <motion.div variants={itemVariants} style={{ background: 'var(--surface-container-lowest)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {[
-            { label: 'Email Notifications', desc: 'Receive email alerts for new tasks and deals', checked: true },
-            { label: 'Desktop Notifications', desc: 'Show browser notifications', checked: true },
-            { label: 'Dark Mode', desc: 'Switch to dark theme (coming soon)', checked: false },
-            { label: 'Auto-Archive Completed', desc: 'Auto-archive completed tasks after 7 days', checked: false },
-          ].map((pref, i, arr) => (
-            <div key={pref.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: i < arr.length - 1 ? '24px' : 0, borderBottom: i < arr.length - 1 ? '1px solid var(--surface-container)' : 'none' }}>
-              <div>
-                <h4 className="title-sm" style={{ marginBottom: '4px' }}>{pref.label}</h4>
-                <p className="body-sm" style={{ color: 'var(--on-surface-variant)' }}>{pref.desc}</p>
-              </div>
-              <button onClick={() => toast.success(`${pref.label} updated`)} style={{ width: '48px', height: '24px', background: pref.checked ? 'var(--primary)' : 'var(--surface-container-high)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.3s' }}>
-                <span style={{ position: 'absolute', width: '18px', height: '18px', background: 'white', top: '3px', left: pref.checked ? '26px' : '4px', transition: 'left 0.3s' }} />
-              </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '24px', borderBottom: '1px solid var(--surface-container)' }}>
+            <div>
+              <h4 className="title-sm" style={{ marginBottom: '4px' }}>Email Notifications</h4>
+              <p className="body-sm" style={{ color: 'var(--on-surface-variant)' }}>Receive email alerts for new tasks and deals</p>
             </div>
-          ))}
+            <button onClick={() => toast.success('Email Notifications updated')} style={{ width: '48px', height: '24px', background: 'var(--primary)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.3s' }}>
+              <span style={{ position: 'absolute', width: '18px', height: '18px', background: 'white', top: '3px', left: '26px', transition: 'left 0.3s' }} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '24px', borderBottom: '1px solid var(--surface-container)' }}>
+            <div>
+              <h4 className="title-sm" style={{ marginBottom: '4px' }}>Desktop Notifications</h4>
+              <p className="body-sm" style={{ color: 'var(--on-surface-variant)' }}>Show browser notifications</p>
+            </div>
+            <button onClick={() => toast.success('Desktop Notifications updated')} style={{ width: '48px', height: '24px', background: 'var(--primary)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.3s' }}>
+              <span style={{ position: 'absolute', width: '18px', height: '18px', background: 'white', top: '3px', left: '26px', transition: 'left 0.3s' }} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '24px', borderBottom: '1px solid var(--surface-container)' }}>
+            <div>
+              <h4 className="title-sm" style={{ marginBottom: '4px' }}>Dark Mode</h4>
+              <p className="body-sm" style={{ color: 'var(--on-surface-variant)' }}>Switch between light and dark theme</p>
+            </div>
+            <button onClick={() => { toggleTheme(); toast.success('Theme updated'); }} style={{ width: '48px', height: '24px', background: isDarkMode ? 'var(--primary)' : 'var(--surface-container-high)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.3s' }}>
+              <span style={{ position: 'absolute', width: '18px', height: '18px', background: 'white', top: '3px', left: isDarkMode ? '26px' : '4px', transition: 'left 0.3s' }} />
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 0, borderBottom: 'none' }}>
+            <div>
+              <h4 className="title-sm" style={{ marginBottom: '4px' }}>Auto-Archive Completed</h4>
+              <p className="body-sm" style={{ color: 'var(--on-surface-variant)' }}>Auto-archive completed tasks after 7 days</p>
+            </div>
+            <button onClick={() => toast.success('Auto-Archive updated')} style={{ width: '48px', height: '24px', background: 'var(--surface-container-high)', border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.3s' }}>
+              <span style={{ position: 'absolute', width: '18px', height: '18px', background: 'white', top: '3px', left: '4px', transition: 'left 0.3s' }} />
+            </button>
+          </div>
+
         </motion.div>
       )}
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
