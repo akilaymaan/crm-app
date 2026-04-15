@@ -91,6 +91,10 @@
   --outline-variant: #333333;
 }
 
+[data-theme="dark"] .table-dark tr:hover td {
+  background: rgba(0, 0, 0, 0.05); /* Fix invisible hover when table inverses to light in dark mode */
+}
+
 /* ==========================================
    Reset & Globals
    ========================================== */
