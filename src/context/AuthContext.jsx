@@ -14,9 +14,14 @@ export function AuthProvider({ children }) {
     if (token) {
       authAPI.getMe()
         .then(res => setUser(res.data.user))
-        .catch(() => { localStorage.removeItem('cliento_token'); localStorage.removeItem('cliento_user'); })
+        .catch(() => { 
+          localStorage.removeItem('cliento_token'); 
+          localStorage.removeItem('cliento_user'); 
+          setUser(null); 
+        })
         .finally(() => setLoading(false));
     } else {
+      setUser(null);
       setLoading(false);
     }
   }, []);
