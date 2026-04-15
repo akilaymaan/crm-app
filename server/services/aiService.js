@@ -75,6 +75,7 @@ async function parseIntent(userMessage, history = []) {
     generationConfig: {
       temperature: 0.1,
       maxOutputTokens: 512,
+      responseMimeType: 'application/json',
     },
   });
 
@@ -98,7 +99,10 @@ async function parseIntent(userMessage, history = []) {
     }
   } catch (apiErr) {
     console.error('[Gemini] API call failed:', apiErr.message);
-    throw apiErr;
+    if (apiErr.message.includes('API key was reported as leaked') || apiErr.status === 403) {
+      return { action: 'unknown', data: {}, message: '❌ Your Gemini API key is reported as leaked or invalid. Please update it in the server .env file.' };
+    }
+    return { action: 'unknown', data: {}, message: '❌ AI Provider Error: ' + apiErr.message };
   }
 
   // Strip accidental markdown fences
