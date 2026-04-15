@@ -65,6 +65,17 @@ exports.login = async (req, res) => {
   }
 };
 
+// @route PUT /api/auth/me
+exports.updateDetails = async (req, res) => {
+  try {
+    const fieldsToUpdate = { name: req.body.name, email: req.body.email };
+    const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, { new: true, runValidators: true });
+    res.json({ success: true, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
 // @route GET /api/auth/me
 exports.getMe = async (req, res) => {
   res.json({ success: true, user: req.user });

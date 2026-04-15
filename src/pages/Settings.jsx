@@ -16,7 +16,7 @@ const roles = [
 ];
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [profile, setProfile] = useState({ name: user?.name || '', email: user?.email || '' });
@@ -25,9 +25,14 @@ export default function Settings() {
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise(r => setTimeout(r, 800));
-    toast.success('Settings saved');
-    setSaving(false);
+    try {
+      await updateProfile(profile.name, profile.email);
+      toast.success('Settings saved successfully');
+    } catch (err) {
+      toast.error('Failed to update settings');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleLogout = () => {
