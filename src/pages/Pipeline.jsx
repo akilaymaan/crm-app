@@ -16,7 +16,13 @@ const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, trans
 const itemVariants = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4 } } };
 
 function DealModal({ deal, contacts, onClose, onSave }) {
-  const [form, setForm] = useState(deal || { title: '', value: '', stage: 'Prospect', probability: 20, contactId: '', notes: '' });
+  const [form, setForm] = useState(() => {
+    if (deal) {
+      const contactVal = deal.contactId && typeof deal.contactId === 'object' ? deal.contactId._id : deal.contactId;
+      return { ...deal, contactId: contactVal || '' };
+    }
+    return { title: '', value: '', stage: 'Prospect', probability: 20, contactId: '', notes: '' };
+  });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
