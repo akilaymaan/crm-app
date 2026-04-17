@@ -14,6 +14,7 @@ import Contacts from './pages/Contacts';
 import Pipeline from './pages/Pipeline';
 import Tasks from './pages/Tasks';
 import Settings from './pages/Settings';
+import Users from './pages/Users';
 
 const pageVariants = {
   initial: { opacity: 0, x: 20 },
@@ -81,6 +82,7 @@ export default function App() {
             <Route path="/pipeline" element={<Pipeline />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/users" element={<Users />} />
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

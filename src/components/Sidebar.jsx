@@ -124,7 +124,7 @@ export default function Sidebar({ isOpen, onToggle }) {
 
         {/* Navigation */}
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: '8px' }}>
-          {menuItems.map((item, index) => {
+          {[...menuItems, ...(user?.role === 'admin' ? [{ path: '/users', label: 'Users', icon: 'manage_accounts' }] : [])].map((item, index) => {
             const isActive = location.pathname === item.path;
             return (
               <motion.div

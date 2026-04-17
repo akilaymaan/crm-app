@@ -9,7 +9,7 @@ const app = express();
 // Connect DB then reload scheduled jobs
 connectDB().then(() => {
   reloadSchedules();
-}).catch(() => {});
+}).catch(() => { });
 
 // CORS whitelist
 const allowedOrigins = [
