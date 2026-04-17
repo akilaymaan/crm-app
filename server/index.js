@@ -46,6 +46,7 @@ app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/deals', require('./routes/deals'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/users', require('./routes/users'));
 
 // 404 handler
 app.use((req, res) => {
