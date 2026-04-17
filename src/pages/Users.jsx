@@ -71,67 +71,116 @@ export default function Users() {
             </button>
           </div>
           
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>NAME</th>
-                  <th>EMAIL</th>
-                  <th>RULESET</th>
-                  <th style={{ width: '250px' }}>ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center', padding: '32px' }}>Loading users...</td></tr>
-                ) : usersList.length === 0 ? (
-                  <tr><td colSpan="4" style={{ textAlign: 'center', padding: '32px' }}>No users found.</td></tr>
-                ) : (
-                  usersList.map((u) => {
-                    // Backwards compatible with both pure json JWT state (_id missing in my jwt payload context earlier if not handled) and db user object
-                    const targetId = u._id || u.id; 
-                    const isSelf = (targetId === user?.id || targetId === user?._id);
-                    return (
-                    <tr key={targetId}>
-                      <td>
-                        <span className="label-md">{u.name} {isSelf && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>(You)</span>}</span>
-                      </td>
-                      <td>{u.email}</td>
-                      <td>
-                         <span className="badge" style={{
-                           background: u.role === 'admin' ? 'var(--primary)' : 'var(--surface-container-high)',
-                           color: u.role === 'admin' ? 'var(--on-primary)' : 'var(--on-surface)'
-                         }}>{u.role.toUpperCase()}</span>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          <select 
-                            className="input" 
-                            style={{ padding: '8px', width: '120px' }}
-                            value={selectedRoles[targetId] || u.role}
-                            onChange={(e) => handleRoleChange(targetId, e.target.value)}
-                            disabled={isSelf}
-                          >
-                            <option value="admin">Admin</option>
-                            <option value="manager">Manager</option>
-                            <option value="analyst">Analyst</option>
-                            <option value="member">Member</option>
-                          </select>
-                          <button 
-                            className="btn btn-secondary"
-                            style={{ padding: '8px 12px' }}
-                            onClick={() => updateRole(targetId)}
-                            disabled={isSelf || (selectedRoles[targetId] === u.role)}
-                          >
-                            Update
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  )})
-                )}
-              </tbody>
-            </table>
+          <div className="user-management-list" style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* Header Row */}
+            <div className="user-row" style={{
+              display: 'grid',
+              gridTemplateColumns: '1.2fr 2fr 1fr auto',
+              alignItems: 'center',
+              padding: '12px 24px',
+              borderBottom: '1px solid #222',
+              fontWeight: '700',
+              fontFamily: 'var(--font-headline)',
+              letterSpacing: '0.05em',
+              fontSize: '0.85rem'
+            }}>
+              <div>NAME</div>
+              <div>EMAIL</div>
+              <div>ROLE</div>
+              <div style={{ textAlign: 'right' }}>ACTIONS</div>
+            </div>
+
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '32px' }}>Loading users...</div>
+            ) : usersList.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '32px' }}>No users found.</div>
+            ) : (
+              usersList.map((u) => {
+                const targetId = u._id || u.id; 
+                const isSelf = (targetId === user?.id || targetId === user?._id);
+                
+                let roleBorderColor = '#4B5563'; // member (grey)
+                if (u.role === 'admin') roleBorderColor = '#E11D48'; // red
+                if (u.role === 'manager') roleBorderColor = '#3B82F6'; // blue
+                if (u.role === 'analyst') roleBorderColor = '#F59E0B'; // orange backing
+
+                return (
+                  <div key={targetId} className="user-row" style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1.2fr 2fr 1fr auto',
+                    alignItems: 'center',
+                    padding: '12px 24px',
+                    borderBottom: '1px solid #222',
+                    borderLeft: isSelf ? '4px solid #FFD700' : '4px solid transparent',
+                    background: isSelf ? 'rgba(255, 215, 0, 0.05)' : 'transparent',
+                    paddingLeft: isSelf ? '20px' : '24px' // adjusting for border width physically
+                  }}>
+                    <div>
+                      <span className="label-md">{u.name} {isSelf && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>(You)</span>}</span>
+                    </div>
+                    
+                    <div style={{ color: 'var(--text-muted)' }}>
+                      {u.email}
+                    </div>
+                    
+                    <div>
+                       <select 
+                         style={{ 
+                           padding: '8px 12px', 
+                           background: 'transparent',
+                           border: `2px solid ${roleBorderColor}`,
+                           color: 'white',
+                           width: '120px',
+                           fontFamily: 'var(--font-body)',
+                           fontSize: '0.9rem',
+                           outline: 'none',
+                           cursor: isSelf ? 'not-allowed' : 'pointer',
+                           opacity: isSelf ? 0.6 : 1
+                         }}
+                         value={selectedRoles[targetId] || u.role}
+                         onChange={(e) => handleRoleChange(targetId, e.target.value)}
+                         disabled={isSelf}
+                       >
+                         <option value="admin" style={{ background: '#111', color: '#fff' }}>Admin</option>
+                         <option value="manager" style={{ background: '#111', color: '#fff' }}>Manager</option>
+                         <option value="analyst" style={{ background: '#111', color: '#fff' }}>Analyst</option>
+                         <option value="member" style={{ background: '#111', color: '#fff' }}>Member</option>
+                       </select>
+                    </div>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <button 
+                        style={{ 
+                          padding: '8px 16px',
+                          background: 'transparent',
+                          border: '2px solid #FFD700',
+                          color: '#FFD700',
+                          fontFamily: 'var(--font-headline)',
+                          fontWeight: 'bold',
+                          cursor: (isSelf || selectedRoles[targetId] === u.role) ? 'not-allowed' : 'pointer',
+                          opacity: (isSelf || selectedRoles[targetId] === u.role) ? 0.4 : 1,
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isSelf && selectedRoles[targetId] !== u.role) {
+                            e.currentTarget.style.background = '#FFD700';
+                            e.currentTarget.style.color = '#000';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = '#FFD700';
+                        }}
+                        onClick={() => updateRole(targetId)}
+                        disabled={isSelf || (selectedRoles[targetId] === u.role)}
+                      >
+                        UPDATE
+                      </button>
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
         </motion.div>
       </div>
