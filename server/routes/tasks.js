@@ -5,7 +5,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.use(protect);
 router.get('/stats', getTaskStats);
-router.route('/').get(getTasks).post(authorize('admin', 'manager', 'member'), createTask);
-router.route('/:id').put(authorize('admin', 'manager', 'member'), updateTask).delete(authorize('admin'), deleteTask);
+router.route('/').get(getTasks).post(createTask);
+router.route('/:id').put(updateTask).delete(deleteTask);
 
 module.exports = router;

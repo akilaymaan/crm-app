@@ -1,13 +1,13 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const generateToken = (id) =>
-  jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
+const generateToken = (user) =>
+  jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
 
 // @route POST /api/auth/register
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide name, email and password' });
@@ -21,8 +21,8 @@ exports.register = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
-    const user = await User.create({ name, email, password, role: role || 'member' });
-    const token = generateToken(user._id);
+    const user = await User.create({ name, email, password, role: 'member' });
+    const token = generateToken(user);
 
     res.status(201).json({
       success: true,
@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(user);
 
     res.json({
       success: true,
@@ -69,7 +69,7 @@ exports.login = async (req, res) => {
 exports.updateDetails = async (req, res) => {
   try {
     const fieldsToUpdate = { name: req.body.name, email: req.body.email };
-    const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, { new: true, runValidators: true });
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, { new: true, runValidators: true });
     res.json({ success: true, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -78,5 +78,6 @@ exports.updateDetails = async (req, res) => {
 
 // @route GET /api/auth/me
 exports.getMe = async (req, res) => {
-  res.json({ success: true, user: req.user });
+  const user = await User.findById(req.user.id).select('-password');
+  res.json({ success: true, user });
 };
