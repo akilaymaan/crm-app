@@ -66,5 +66,11 @@ export const aiAPI = {
   confirm: (intent) => API.post('/ai/confirm', { intent }),
 };
 
+// ─── USERS (Admin Only) ───────────────────────────
+export const usersAPI = {
+  getAll: () => API.get('/users'),
+  updateRole: (id, role) => API.patch(`/users/${id}/role`, { role }),
+};
+
 export default API;
 
